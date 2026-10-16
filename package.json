@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "test": "cypress run",
+    "test:smoke": "cypress run --env grepTags=@smoke",
+    "test:regression": "cypress run --env grepTags=@regression"
+  },
   "devDependencies": {
+    "@cypress/grep": "^4.1.0",
     "cypress": "^15.14.1",
     "cypress-mochawesome-reporter": "^4.0.2",
     "cypress-multi-reporters": "^2.0.5",

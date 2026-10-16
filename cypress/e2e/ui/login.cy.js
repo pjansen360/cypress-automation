@@ -23,7 +23,7 @@ describe('Login', () => {
 
   it('shows an error message for a locked out user', { tags: '@regression' }, () => {
     // Arrange / Act
-    LoginPage.login('locked_out_users', 'secret_sauce');
+    LoginPage.login('locked_out_user', 'secret_sauce');
 
     // Assert
     LoginPage.assertError('Sorry, this user has been locked out');

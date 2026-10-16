@@ -1,68 +1,110 @@
 # cypress-automation
 
-Cypress Automation Framework  
+Projeto de estudo e demonstração de automação de testes com Cypress, cobrindo UI (E2E), API e integração contínua.
 
-Projeto de automação de testes end-to-end (E2E) utilizando Cypress, com foco em boas práticas e organização.  
+## 📌 Objetivo
 
-📌 Objetivo  
+Demonstrar, em um projeto público e pequeno:
 
-Este projeto foi desenvolvido com o objetivo de demonstrar:  
+- Organização de testes com Page Object Model
+- Comandos customizados reutilizáveis
+- Testes de API diretos (`cy.request`)
+- Separação de baterias de teste (smoke / regression) por tags, com `@cypress/grep`
+- Pipeline de CI/CD rodando as baterias automaticamente a cada push/PR
 
-Criação de um framework de automação com Cypress  
-Aplicação de boas práticas (Page Object Model, comandos customizados)  
-Simulação de cenários reais de usuário  
+Não é um sistema em produção — é um projeto de portfólio, construído sobre aplicações públicas de demonstração (SauceDemo e a API pública reqres.in).
 
-🧰 Tecnologias utilizadas  
-JavaScript (ES6+)  
-Cypress  
-Node.js  
-Mochawesome  
+## 🧰 Tecnologias utilizadas
 
-📁 Estrutura do projeto  
-cypress/  
-├── e2e/            # Casos de teste  
-├── fixtures/       # Dados mockados  
-├── support/        # Commands e configurações globais  
-├── pages/          # Page Objects (se aplicável)  
+- JavaScript (ES6+)
+- Cypress
+- Node.js
+- cypress-mochawesome-reporter
+- @cypress/grep
+- GitHub Actions
 
-⚙️ Pré-requisitos  
+## 📁 Estrutura do projeto
 
-Antes de começar, você precisa ter instalado:  
+```
+cypress/
+├── e2e/
+│   ├── ui/          # Testes de interface (login)
+│   └── api/         # Testes de API via cy.request
+├── fixtures/         # Dados mockados
+├── pages/            # Page Objects
+└── support/          # Comandos customizados e configuração global
+.github/workflows/     # Pipeline de CI/CD
+```
 
-Node.js  
+## ⚙️ Pré-requisitos
 
-▶️ Como executar o projeto  
-1. Clonar o repositório  
-git clone https://github.com/pjansen360/cypress-automation.git  
-cd cypress-automation  
-2. Instalar dependências  
-npm install  
+- Node.js
 
-3. Executar os testes
+## ▶️ Como executar o projeto
 
-Modo interativo:
-npx cypress open
+1. Clonar o repositório
+   ```
+   git clone https://github.com/pjansen360/cypress-automation.git
+   cd cypress-automation
+   npm install
+   ```
 
-Modo headless:
-npx cypress run
+2. Executar os testes
 
-🧠 Boas práticas aplicadas  
-Uso de Page Object Model (POM)  
-Separação de responsabilidades  
-Reutilização de código com custom commands  
-Evita uso de waits fixos (cy.wait)  
-Uso de seletores mais estáveis  
+   Modo interativo:
+   ```
+   npx cypress open
+   ```
 
-📸 Evidências  
+   Modo headless, bateria completa:
+   ```
+   npm test
+   ```
 
-O Cypress gera automaticamente:  
+   Só a bateria de smoke:
+   ```
+   npm run test:smoke
+   ```
 
-Screenshots em caso de falha  
-Vídeos das execuções  
+   Só a bateria de regressão:
+   ```
+   npm run test:regression
+   ```
 
-Backlock:  
-Implementar Page Object Model (POM)  
-Integração com API (cy.request)  
-Pipeline CI/CD completo  
-Testes cross-browser  
-Testes de performance básicos  
+## 🏷️ Baterias de teste (smoke / regression)
+
+Os testes são marcados com tags usando `@cypress/grep`, o que permite rodar subconjuntos específicos sem precisar separar os testes em pastas diferentes:
+
+```js
+it('logs in successfully with valid credentials', { tags: ['@smoke', '@regression'] }, () => {
+  ...
+});
+```
+
+Rodando manualmente com uma tag específica:
+```
+npx cypress run --env grepTags=@smoke
+npx cypress run --env grepTags=@regression
+```
+
+No pipeline de CI, a bateria de **smoke** roda em todo push/PR; a bateria de **regression** roda em seguida, como um segundo job.
+
+## 🧠 Boas práticas aplicadas
+
+- Page Object Model (`cypress/pages/LoginPage.js`), separando seletores e ações da lógica de teste
+- Comandos customizados (`cy.login`, `cy.apiGetUser`) para reduzir duplicação
+- Casos de sucesso e de falha (login válido, senha incorreta, usuário bloqueado)
+- Testes de API isolados com `cy.request`, validando status code e schema
+- Baterias de teste organizadas por tags (smoke / regression)
+- Pipeline de CI/CD no GitHub Actions, com smoke e regression como jobs separados, publicando o relatório como artefato
+
+## 📸 Evidências
+
+O Cypress gera automaticamente screenshots e vídeos das execuções, além do relatório HTML (cypress-mochawesome-reporter), publicado como artefato em cada execução do pipeline.
+
+## 🔜 Próximos passos
+
+- Testes de interceptação de rede (`cy.intercept`)
+- Testes cross-browser
+- Testes de performance básicos
+- Expandir a cobertura de API para outros recursos
