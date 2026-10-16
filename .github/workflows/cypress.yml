@@ -1,0 +1,50 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run smoke tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          command: npx cypress run --env grepTags=@smoke
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-report-smoke
+          path: cypress/reports
+          retention-days: 7
+
+  regression:
+    runs-on: ubuntu-latest
+    needs: smoke
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run regression suite
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          command: npx cypress run --env grepTags=@regression
+
+      - name: Upload regression report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-report-regression
+          path: cypress/reports
+          retention-days: 7
